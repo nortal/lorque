@@ -8,7 +8,7 @@ import java.util.Date;
 public class Query {
 
   private Long id;
-  private String status;
+  private QueryStatus status;
   private String querySql;
   private String queryParameters;
   private Date submitTime;
@@ -23,11 +23,11 @@ public class Query {
     this.id = id;
   }
 
-  public String getStatus() {
+  public QueryStatus getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
+  public void setStatus(QueryStatus status) {
     this.status = status;
   }
 

@@ -63,8 +63,13 @@ public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<
                       MultivaluedMap<String, Object> httpHeaders,
                       OutputStream entityStream) throws IOException, WebApplicationException {
     PrintWriter printWriter = new PrintWriter(entityStream);
+    String json;
+    if (object instanceof String) {
+      json = (String) object;
+    } else {
+      json = gson.toJson(object);
+    }
     try {
-      String json = gson.toJson(object);
       printWriter.write(json);
       printWriter.flush();
     } finally {

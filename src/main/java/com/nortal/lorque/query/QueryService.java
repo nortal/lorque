@@ -9,4 +9,9 @@ public interface QueryService {
 
   List<Query> getActiveQueries();
 
+  Query getQuery(Long id);
+
+  void create(Query query);
+
+  void cancel(Long id);
 }
