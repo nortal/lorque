@@ -1,10 +1,10 @@
 package com.nortal.lorque.query;
 
 /**
- * @author Vassili Jakovlev (vassili.jakovlev@nortal.com)
+ * @author Vassili Jakovlev
  */
 public enum QueryStatus {
 
-  SUBMITTED, CANCELLED;
+  SUBMITTED, CANCELLED, RUNNING;
 
 }

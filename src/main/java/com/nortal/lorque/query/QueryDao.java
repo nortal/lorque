@@ -61,6 +61,10 @@ public class QueryDao {
     return jdbcTemplate.query("select * from query where status = ?", new QueryRowMapper(), QueryStatus.SUBMITTED.name());
   }
 
+  public void updateStatus(Long queryId, QueryStatus status) {
+    jdbcTemplate.update("update query set status = ? where id = ?", status.name(), queryId);
+  }
+
   private class QueryRowMapper implements RowMapper<Query> {
     @Override
     public Query mapRow(ResultSet rs, int rowNum) throws SQLException {

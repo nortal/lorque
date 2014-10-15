@@ -16,6 +16,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.sql.DataSource;
@@ -31,6 +32,7 @@ import java.sql.SQLException;
 @PropertySource(value = "classpath:runtime.properties")
 @ComponentScan(basePackages = {"com.nortal.lorque"})
 @EnableScheduling
+@EnableAsync
 public class AppConfig {
 
   @Autowired

@@ -29,10 +29,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 @Consumes(APPLICATION_JSON)
 public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<T> {
 
-  /**
-   * ISO 8601 compliant date time format (requires Java 7+)
-   */
-  public final static String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssX";
+
 
   private final Gson gson;
 
@@ -41,7 +38,7 @@ public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<
   }
 
   public static GsonBuilder getGsonBuilder() {
-    return new GsonBuilder().setDateFormat(DATE_TIME_FORMAT);
+    return new GsonBuilder().setDateFormat(DateFormat.ISO_8601);
   }
 
   @Override
