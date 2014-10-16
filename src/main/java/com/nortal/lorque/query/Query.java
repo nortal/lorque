@@ -14,6 +14,7 @@ public class Query {
   private Date submitTime;
   private Date startTime;
   private Date endTime;
+  private String result;
 
   public Long getId() {
     return id;
@@ -69,5 +70,13 @@ public class Query {
 
   public void setEndTime(Date endTime) {
     this.endTime = endTime;
+  }
+
+  public String getResult() {
+    return result;
+  }
+
+  public void setResult(String result) {
+    this.result = result;
   }
 }

@@ -1,5 +1,7 @@
 package com.nortal.lorque.query;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.util.Queue;
  */
 @Service("queryService")
 public class QueryServiceImpl implements QueryService {
+
+  static final Logger log = LogManager.getLogger(QueryServiceImpl.class.getName());
 
   @Resource
   private QueryDao queryDao;
@@ -50,16 +54,16 @@ public class QueryServiceImpl implements QueryService {
   private void refreshPendingQueries() {
     List<Query> newQueries = queryDao.getNewQueries();
     if (!CollectionUtils.isEmpty(newQueries)) {
-      System.out.println("Wooohooooo, new queries submitted!");
+      log.error("Wooohooooo, new queries submitted!");
       synchronized (pendingQueries) {
         pendingQueries.clear();
         pendingQueries.addAll(newQueries);
       }
     }
     if (pendingQueries.isEmpty()) {
-      System.out.println("No queries to process. Sleeping...");
+      log.debug("No queries to process. Sleeping...");
     } else {
-      System.out.println("Pending queries count: " + pendingQueries.size());
+      log.debug("Total number of pending queries: " + pendingQueries.size());
     }
   }
 
@@ -77,19 +81,21 @@ public class QueryServiceImpl implements QueryService {
     if (query == null) {
       return;
     }
-    System.out.println("Starting query id='" + query.getId() + "' execution.");
-    updateStatus(query, QueryStatus.RUNNING);
+    log.debug("Starting query id='" + query.getId() + "' execution.");
+    updateStatus(query, QueryStatus.SUBMITTED, QueryStatus.RUNNING);
+    queryDao.updateStartTime(query.getId(), new Date());
     String result = queryExecutorDao.execute(query);
-    System.out.println("Result: " + result);
+    updateStatus(query, QueryStatus.RUNNING, QueryStatus.COMPLETED);
+    log.debug("Query " + query.getId() + " result: " + result);
+    queryDao.complete(query.getId(), result, new Date());
   }
 
 
-  private void updateStatus(Query query, QueryStatus toStatus) {
-    QueryStatus fromStatus = query.getStatus();
+  private void updateStatus(Query query, QueryStatus fromStatus, QueryStatus toStatus) {
     if (fromStatus == QueryStatus.CANCELLED) {
       throw new IllegalStateException("Cannot update status from " + fromStatus + " to " + toStatus);
     }
-    queryDao.updateStatus(query.getId(), toStatus);
+    queryDao.updateStatus(query.getId(), fromStatus, toStatus);
   }
 
 }
