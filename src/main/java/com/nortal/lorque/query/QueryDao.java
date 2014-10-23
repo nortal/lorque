@@ -64,7 +64,10 @@ public class QueryDao {
   }
 
   public void updateStatus(Long queryId, QueryStatus from, QueryStatus to) {
-    jdbcTemplate.update("update query set status = ? where id = ? and status = ?", to.name(), queryId, from.name());
+    int rowsUpdated = jdbcTemplate.update("update query set status = ? where id = ? and status = ?", to.name(), queryId, from.name());
+    if (rowsUpdated == 0) {
+      throw new IllegalStateException("Failed to update status from " + from + " to " + to);
+    }
   }
 
   public void updateStartTime(Long queryId, Date startTime) {

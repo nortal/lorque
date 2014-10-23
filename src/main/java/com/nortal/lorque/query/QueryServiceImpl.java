@@ -2,12 +2,14 @@ package com.nortal.lorque.query;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,7 +56,7 @@ public class QueryServiceImpl implements QueryService {
   private void refreshPendingQueries() {
     List<Query> newQueries = queryDao.getNewQueries();
     if (!CollectionUtils.isEmpty(newQueries)) {
-      log.error("Wooohooooo, new queries submitted!");
+      log.debug("Wooohooooo, new queries submitted!");
       synchronized (pendingQueries) {
         pendingQueries.clear();
         pendingQueries.addAll(newQueries);
@@ -82,20 +84,18 @@ public class QueryServiceImpl implements QueryService {
       return;
     }
     log.debug("Starting query id='" + query.getId() + "' execution.");
-    updateStatus(query, QueryStatus.SUBMITTED, QueryStatus.RUNNING);
+    queryDao.updateStatus(query.getId(), QueryStatus.SUBMITTED, QueryStatus.RUNNING);
     queryDao.updateStartTime(query.getId(), new Date());
-    String result = queryExecutorDao.execute(query);
-    updateStatus(query, QueryStatus.RUNNING, QueryStatus.COMPLETED);
-    log.debug("Query " + query.getId() + " result: " + result);
-    queryDao.complete(query.getId(), result, new Date());
-  }
-
-
-  private void updateStatus(Query query, QueryStatus fromStatus, QueryStatus toStatus) {
-    if (fromStatus == QueryStatus.CANCELLED) {
-      throw new IllegalStateException("Cannot update status from " + fromStatus + " to " + toStatus);
+    try {
+      String result = queryExecutorDao.execute(query);
+      queryDao.updateStatus(query.getId(), QueryStatus.RUNNING, QueryStatus.COMPLETED);
+      log.debug("Query " + query.getId() + " result: " + result);
+      queryDao.complete(query.getId(), result, new Date());
+    } catch (SQLException | DataAccessException e) {
+      queryDao.updateStatus(query.getId(), QueryStatus.RUNNING, QueryStatus.FAILED);
+      // TODO: stack trace to string
+      queryDao.complete(query.getId(), e.getMessage(), new Date());
     }
-    queryDao.updateStatus(query.getId(), fromStatus, toStatus);
   }
 
 }

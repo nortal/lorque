@@ -19,17 +19,12 @@ public class QueryExecutorDao {
   @Resource(name = "jdbcTemplate")
   private JdbcTemplate jdbcTemplate;
 
-  public String execute(Query query) {
+  public String execute(Query query) throws SQLException {
     return jdbcTemplate.query(query.getQuerySql(), new ResultSetExtractor<String>() {
 
       @Override
       public String extractData(ResultSet rs) throws SQLException, DataAccessException {
-        try {
-          String json = ResultSetToJsonUtil.getJson(rs);
-          return json;
-        } catch (SQLException e) {
-          throw e;
-        }
+        return ResultSetToJsonUtil.getJson(rs);
       }
 
     });

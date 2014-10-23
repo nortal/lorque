@@ -5,6 +5,6 @@ package com.nortal.lorque.query;
  */
 public enum QueryStatus {
 
-  SUBMITTED, CANCELLED, RUNNING, COMPLETED;
+  SUBMITTED, CANCELLED, RUNNING, COMPLETED, FAILED;
 
 }
