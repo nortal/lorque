@@ -1,5 +1,6 @@
 package com.nortal.lorque.query;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -93,8 +94,8 @@ public class QueryServiceImpl implements QueryService {
       queryDao.complete(query.getId(), result, new Date());
     } catch (SQLException | DataAccessException e) {
       queryDao.updateStatus(query.getId(), QueryStatus.RUNNING, QueryStatus.FAILED);
-      // TODO: stack trace to string
-      queryDao.complete(query.getId(), e.getMessage(), new Date());
+      String error = ExceptionUtils.getMessage(e) + "\n" + ExceptionUtils.getStackTrace(e);
+      queryDao.complete(query.getId(), error, new Date());
     }
   }
 
