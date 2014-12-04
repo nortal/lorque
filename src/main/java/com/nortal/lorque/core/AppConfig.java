@@ -29,7 +29,7 @@ import java.sql.SQLException;
  * @author Vassili Jakovlev
  */
 @Configuration
-@PropertySource(value = "classpath:runtime.properties")
+@PropertySource(value = {"file:///${user.home}/.lorque/db.properties"}, ignoreResourceNotFound = true)
 @ComponentScan(basePackages = {"com.nortal.lorque"})
 @EnableScheduling
 @EnableAsync
