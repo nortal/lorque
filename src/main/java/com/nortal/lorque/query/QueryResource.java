@@ -40,8 +40,9 @@ public class QueryResource extends BaseResource {
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  public void create(Query query) {
+  public Response create(Query query) {
     queryService.create(query);
+    return created(query.getId());
   }
 
   @DELETE

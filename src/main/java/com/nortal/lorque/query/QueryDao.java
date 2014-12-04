@@ -39,20 +39,21 @@ public class QueryDao {
 
   public List<Query> getActiveQueries() {
     String sql = "select * from query where status <> ?";
-    return jdbcTemplate.query(sql, new QueryRowMapper(), QueryStatus.CANCELLED.name());
+    return jdbcTemplate.query(sql, new QueryRowMapper(false), QueryStatus.CANCELLED.name());
   }
 
   public Query getQuery(Long id) {
     try {
-      return jdbcTemplate.queryForObject("select * from query where id = ?", new QueryRowMapper(), id);
+      return jdbcTemplate.queryForObject("select * from query where id = ?", new QueryRowMapper(true), id);
     } catch (IncorrectResultSizeDataAccessException e) {
       return null;
     }
   }
 
-  public void create(Query query) {
+  public Long create(Query query) {
     String sql = "insert into query (status, query_sql, query_parameters, submit_time) values (?,?,?,?)";
     jdbcTemplate.update(sql, query.getStatus().name(), query.getQuerySql(), query.getQueryParameters(), query.getSubmitTime());
+    return jdbcTemplate.queryForObject("call identity()", Long.class);
   }
 
   public void cancel(Long id) {
@@ -60,7 +61,7 @@ public class QueryDao {
   }
 
   public List<Query> getNewQueries() {
-    return jdbcTemplate.query("select * from query where status = ?", new QueryRowMapper(), QueryStatus.SUBMITTED.name());
+    return jdbcTemplate.query("select * from query where status = ?", new QueryRowMapper(false), QueryStatus.SUBMITTED.name());
   }
 
   public void updateStatus(Long queryId, QueryStatus from, QueryStatus to) {
@@ -79,6 +80,12 @@ public class QueryDao {
   }
 
   private class QueryRowMapper implements RowMapper<Query> {
+    private final boolean includeResult;
+
+    private QueryRowMapper(boolean includeResult) {
+      this.includeResult = includeResult;
+    }
+
     @Override
     public Query mapRow(ResultSet rs, int rowNum) throws SQLException {
       Query query = new Query();
@@ -89,7 +96,9 @@ public class QueryDao {
       query.setSubmitTime(rs.getTimestamp("submit_time"));
       query.setStartTime(rs.getTimestamp("start_time"));
       query.setEndTime(rs.getTimestamp("end_time"));
-      query.setResult(rs.getString("result"));
+      if (includeResult) {
+        query.setResult(rs.getString("result"));
+      }
       return query;
     }
   }

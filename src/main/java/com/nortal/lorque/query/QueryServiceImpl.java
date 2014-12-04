@@ -45,7 +45,8 @@ public class QueryServiceImpl implements QueryService {
   public void create(Query query) {
     query.setSubmitTime(new Date());
     query.setStatus(QueryStatus.SUBMITTED);
-    queryDao.create(query);
+    Long id = queryDao.create(query);
+    query.setId(id);
   }
 
   @Override
