@@ -49,7 +49,7 @@ public final class ResultSetToJsonUtil {
     }
   }
 
-  public static String getJson(ResultSet rs) throws SQLException {
+  public static JsonArray getJson(ResultSet rs) throws SQLException {
     JsonArray jsonArray = new JsonArray();
     ResultSetMetaData rsMetaData = rs.getMetaData();
     while (rs.next()) {
@@ -61,7 +61,7 @@ public final class ResultSetToJsonUtil {
       }
       jsonArray.add(jsonRow);
     }
-    return jsonArray.toString();
+    return jsonArray;
   }
 
   private static SimpleDateFormat getSimpleDateFormat() {

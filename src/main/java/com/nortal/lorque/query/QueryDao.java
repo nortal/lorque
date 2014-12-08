@@ -1,5 +1,8 @@
 package com.nortal.lorque.query;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -9,6 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -52,7 +56,7 @@ public class QueryDao {
 
   public Long create(Query query) {
     String sql = "insert into query (status, query_sql, query_parameters, submit_time) values (?,?,?,?)";
-    jdbcTemplate.update(sql, query.getStatus().name(), query.getQuerySql(), query.getQueryParameters(), query.getSubmitTime());
+    jdbcTemplate.update(sql, query.getStatus().name(), query.getQuerySql(), StringUtils.join(query.getQueryParameters(), ", "), query.getSubmitTime());
     return jdbcTemplate.queryForObject("call identity()", Long.class);
   }
 
@@ -92,12 +96,15 @@ public class QueryDao {
       query.setId(rs.getLong("id"));
       query.setStatus(QueryStatus.valueOf(rs.getString("status")));
       query.setQuerySql(rs.getString("query_sql"));
-      query.setQueryParameters(rs.getString("query_parameters"));
+      String[] params = StringUtils.split(rs.getString("query_parameters"), ", ");
+      query.setQueryParameters(params == null ? null : Arrays.asList(params));
       query.setSubmitTime(rs.getTimestamp("submit_time"));
       query.setStartTime(rs.getTimestamp("start_time"));
       query.setEndTime(rs.getTimestamp("end_time"));
       if (includeResult) {
-        query.setResult(rs.getString("result"));
+        JsonParser parser = new JsonParser();
+        JsonElement tradeElement = parser.parse(rs.getString("result"));
+        query.setResult(tradeElement.getAsJsonArray());
       }
       return query;
     }

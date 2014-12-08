@@ -1,5 +1,6 @@
 package com.nortal.lorque.query;
 
+import com.google.gson.JsonArray;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -89,11 +90,11 @@ public class QueryServiceImpl implements QueryService {
     queryDao.updateStatus(query.getId(), QueryStatus.SUBMITTED, QueryStatus.RUNNING);
     queryDao.updateStartTime(query.getId(), new Date());
     try {
-      String result = queryExecutorDao.execute(query);
+      JsonArray result = queryExecutorDao.execute(query);
       queryDao.updateStatus(query.getId(), QueryStatus.RUNNING, QueryStatus.COMPLETED);
       log.debug("Query " + query.getId() + " result: " + result);
-      queryDao.complete(query.getId(), result, new Date());
-    } catch (SQLException | DataAccessException e) {
+      queryDao.complete(query.getId(), result.toString(), new Date());
+    } catch (Exception e) {
       queryDao.updateStatus(query.getId(), QueryStatus.RUNNING, QueryStatus.FAILED);
       String error = ExceptionUtils.getMessage(e) + "\n" + ExceptionUtils.getStackTrace(e);
       queryDao.complete(query.getId(), error, new Date());

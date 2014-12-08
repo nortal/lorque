@@ -1,6 +1,9 @@
 package com.nortal.lorque.query;
 
+import com.google.gson.JsonArray;
+
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Vassili Jakovlev
@@ -10,11 +13,11 @@ public class Query {
   private Long id;
   private QueryStatus status;
   private String querySql;
-  private String queryParameters;
+  private List<String> queryParameters;
   private Date submitTime;
   private Date startTime;
   private Date endTime;
-  private String result;
+  private JsonArray result;
 
   public Long getId() {
     return id;
@@ -40,11 +43,11 @@ public class Query {
     this.querySql = querySql;
   }
 
-  public String getQueryParameters() {
+  public List<String> getQueryParameters() {
     return queryParameters;
   }
 
-  public void setQueryParameters(String queryParameters) {
+  public void setQueryParameters(List<String> queryParameters) {
     this.queryParameters = queryParameters;
   }
 
@@ -72,11 +75,11 @@ public class Query {
     this.endTime = endTime;
   }
 
-  public String getResult() {
+  public JsonArray getResult() {
     return result;
   }
 
-  public void setResult(String result) {
+  public void setResult(JsonArray result) {
     this.result = result;
   }
 }
