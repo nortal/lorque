@@ -1,17 +1,16 @@
 package com.nortal.lorque.query;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -93,11 +92,13 @@ public class QueryServiceImpl implements QueryService {
       JsonArray result = queryExecutorDao.execute(query);
       queryDao.updateStatus(query.getId(), QueryStatus.RUNNING, QueryStatus.COMPLETED);
       log.debug("Query " + query.getId() + " result: " + result);
-      queryDao.complete(query.getId(), result.toString(), new Date());
+      queryDao.complete(query.getId(), result.toString(), null, new Date());
     } catch (Exception e) {
+      QueryError error = new QueryError();
+      error.setMessage(ExceptionUtils.getMessage(e));
+      error.setContent(ExceptionUtils.getStackTrace(e));
       queryDao.updateStatus(query.getId(), QueryStatus.RUNNING, QueryStatus.FAILED);
-      String error = ExceptionUtils.getMessage(e) + "\n" + ExceptionUtils.getStackTrace(e);
-      queryDao.complete(query.getId(), error, new Date());
+      queryDao.complete(query.getId(), null, new Gson().toJson(error), new Date());
     }
   }
 

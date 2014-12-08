@@ -1,6 +1,6 @@
 package com.nortal.lorque.query;
 
-import com.google.gson.JsonElement;
+import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -36,7 +36,8 @@ public class QueryDao {
         + "SUBMIT_TIME DATE NOT NULL, "
         + "START_TIME DATE, "
         + "END_TIME DATE,"
-        + "RESULT CLOB"
+        + "RESULT CLOB,"
+        + "ERROR CLOB"
         + ")";
     jdbcTemplate.execute(sql);
   }
@@ -79,8 +80,8 @@ public class QueryDao {
     jdbcTemplate.update("update query set start_time = ? where id = ? and start_time is null", startTime, queryId);
   }
 
-  public void complete(Long queryId, String result, Date endTime) {
-    jdbcTemplate.update("update query set result = ?, end_time = ? where id = ?", result, endTime, queryId);
+  public void complete(Long queryId, String result, String error, Date endTime) {
+    jdbcTemplate.update("update query set result = ?, error = ?, end_time = ? where id = ?", result, error, endTime, queryId);
   }
 
   private class QueryRowMapper implements RowMapper<Query> {
@@ -103,8 +104,11 @@ public class QueryDao {
       query.setEndTime(rs.getTimestamp("end_time"));
       if (includeResult) {
         JsonParser parser = new JsonParser();
-        JsonElement tradeElement = parser.parse(rs.getString("result"));
-        query.setResult(tradeElement.getAsJsonArray());
+        String result = rs.getString("result");
+        if (result != null) {
+          query.setResult(parser.parse(result).getAsJsonArray());
+        }
+        query.setError(new Gson().fromJson(rs.getString("error"), QueryError.class));
       }
       return query;
     }

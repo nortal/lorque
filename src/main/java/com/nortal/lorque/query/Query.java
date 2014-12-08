@@ -18,6 +18,7 @@ public class Query {
   private Date startTime;
   private Date endTime;
   private JsonArray result;
+  private QueryError error;
 
   public Long getId() {
     return id;
@@ -81,5 +82,13 @@ public class Query {
 
   public void setResult(JsonArray result) {
     this.result = result;
+  }
+
+  public QueryError getError() {
+    return error;
+  }
+
+  public void setError(QueryError error) {
+    this.error = error;
   }
 }
