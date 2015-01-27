@@ -1,0 +1,19 @@
+{
+  "name": "anga",
+  "version": "0.0.1",
+  "dependencies": {
+    "angular": "1.3.0-beta.17",
+    "angular-resource": "1.3.0-beta.17",
+    "angular-route": "1.3.0-beta.17",
+    "bootstrap-sass-official": "~3.1.0",
+    "angular-strap": "~2.0.3",
+    "nortal-underscore": "~0.1.1"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.3.0-beta.17",
+    "angular-scenario": "1.3.0-beta.17"
+  },
+  "resolutions": {
+    "angular": "1.3.0-beta.17"
+  }
+}

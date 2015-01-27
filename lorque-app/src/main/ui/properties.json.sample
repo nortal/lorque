@@ -1,0 +1,18 @@
+{
+  "dataSource": "proxy",
+  "proxies": [
+    {
+      "context": "/app-name/api",
+      "host": "localhost",
+      "port": 8080,
+      "https": false
+    },
+    {
+      "context": "/j_spring_cas_security_check",
+      "host": "localhost",
+      "port": 8080,
+      "https": false,
+      "changeOrigin": false
+    }
+  ]
+}

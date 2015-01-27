@@ -1,0 +1,7 @@
+node_modules
+app/bower_components/
+properties.json
+.idea
+.tmp
+dist
+.sass-cache

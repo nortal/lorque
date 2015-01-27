@@ -1,0 +1,28 @@
+<div>
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>SQL</th>
+      <th>Parameters</th>
+      <th>Submitted</th>
+      <th>Started</th>
+      <th>Finished</th>
+      <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="query in queries">
+      <th scope="row">{{query.id}}</th>
+      <td>{{query.sql}}</td>
+      <td>{{query.parameters}}</td>
+      <td>{{formatDate(query.submitTime)}}</td>
+      <td>{{formatDate(query.startTime)}}</td>
+      <td>{{formatDate(query.endTime)}}</td>
+      <td>
+        <button type="button" ng-class="'btn-block btn btn-' + getStatusButtonClass(query)">{{query.status}}</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

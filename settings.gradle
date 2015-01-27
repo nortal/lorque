@@ -1,0 +1,3 @@
+include 'lorque-api', 'lorque-app'
+
+rootProject.name = 'lorque'

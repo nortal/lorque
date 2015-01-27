@@ -1,0 +1,42 @@
+[
+  {
+    "id": 0,
+    "status": "SUBMITTED",
+    "sql": "select display_code, display_name from sys_entity where class_code \u003d \u0027DOMAIN\u0027",
+    "submitTime": "2015-01-26T17:34:50+02",
+    "startTime": "2015-01-26T17:34:55+02",
+    "endTime": "2015-01-26T17:34:55+02"
+  },
+  {
+    "id": 1,
+    "status": "RUNNING",
+    "sql": "select display_code, display_name from sys_entity where class_code \u003d \u0027DOMAIN\u0027",
+    "submitTime": "2015-01-26T17:35:07+02",
+    "startTime": "2015-01-26T17:35:09+02",
+    "endTime": "2015-01-26T17:35:09+02"
+  },
+  {
+    "id": 2,
+    "status": "COMPLETED",
+    "sql": "select display_code, display_name from sys_entity where class_code \u003d \u0027DOMAIN\u0027",
+    "submitTime": "2015-01-26T17:35:08+02",
+    "startTime": "2015-01-26T17:35:09+02",
+    "endTime": "2015-01-26T17:35:09+02"
+  },
+  {
+    "id": 3,
+    "status": "CANCELLED",
+    "sql": "select display_code, display_name from sys_entity where class_code \u003d \u0027DOMAIN\u0027",
+    "submitTime": "2015-01-26T17:35:08+02",
+    "startTime": "2015-01-26T17:35:09+02",
+    "endTime": "2015-01-26T17:35:09+02"
+  },
+  {
+    "id": 4,
+    "status": "FAILED",
+    "sql": "select display_code, display_name from sys_entity where class_code \u003d \u0027DOMAIN\u0027",
+    "submitTime": "2015-01-26T17:35:09+02",
+    "startTime": "2015-01-26T17:35:09+02",
+    "endTime": "2015-01-26T17:35:09+02"
+  }
+]

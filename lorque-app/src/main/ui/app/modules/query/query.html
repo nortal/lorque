@@ -1,0 +1,35 @@
+<form ng-submit="submitQuery()">
+  <div class="form-group">
+    <label for="querySql">Query SQL</label>
+    <textarea id="querySql" class="form-control" rows="7" ng-model="query.sql"
+              ng-disabled="query.id != undefined"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="queryParameters">Query Parameters</label>
+    <input type="text" class="form-control" id="queryParameters" ng-model="query.parameters"
+           ng-disabled="query.id != undefined">
+  </div>
+  <div class="form-group">
+    <label>Callback</label>
+
+    <div class="input-group">
+      <span class="input-group-addon">
+        <select ng-model="query.callback.method" ng-disabled="query.id != undefined">
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+        </select>
+      </span>
+      <input type="text" class="form-control" placeholder="http://" ng-model="query.callback.url"
+             ng-disabled="query.id != undefined">
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary" ng-if="query.id == undefined">Submit</button>
+  <div class="form-group" ng-if="query.result">
+    <label>Result</label>
+    <pre>{{query.result | json}}</pre>
+  </div>
+  <div class="form-group" ng-if="query.error">
+    <label>Error</label>
+    <pre>{{query.error | json}}</pre>
+  </div>
+</form>
