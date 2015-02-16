@@ -8,6 +8,14 @@ public class QueryError {
   private String message;
   private String content;
 
+  public QueryError() {
+  }
+
+  public QueryError(String message, String content) {
+    this.message = message;
+    this.content = content;
+  }
+
   public String getMessage() {
     return message;
   }

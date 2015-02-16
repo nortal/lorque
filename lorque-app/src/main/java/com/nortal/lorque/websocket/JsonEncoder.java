@@ -1,7 +1,7 @@
 package com.nortal.lorque.websocket;
 
 import com.google.gson.Gson;
-import com.nortal.lorque.core.GsonProvider;
+import com.google.gson.GsonBuilder;
 
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
@@ -13,7 +13,9 @@ public class JsonEncoder implements Encoder.Text<Object> {
 
   @Override
   public void init(final EndpointConfig config) {
-    gson = GsonProvider.getGsonBuilder().create();
+    if (gson == null) {
+      gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssX").create();
+    }
   }
 
   @Override

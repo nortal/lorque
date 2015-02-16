@@ -8,47 +8,96 @@ buildscript {
 }
 
 allprojects {
-    apply plugin: 'artifactory'
+//    apply plugin: 'artifactory'
 }
 
-artifactory {
-    contextUrl = "${artifactory_contextUrl}"
-    publish {
-        repository {
-            repoKey = 'nortal-libs-snapshot-local'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-        defaults {
-            publishPom = true
-            publishIvy = false
-        }
-    }
-    resolve {
-        repository {
-            repoKey = 'repo'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-    }
-}
+//artifactory {
+//    contextUrl = "${artifactory_contextUrl}"
+//    publish {
+//        repository {
+//            repoKey = 'nortal-libs-snapshot-local'
+//            username = "${artifactory_user}"
+//            password = "${artifactory_password}"
+//            maven = true
+//        }
+//        defaults {
+//            publishPom = true
+//            publishIvy = false
+//        }
+//    }
+//    resolve {
+//        repository {
+//            repoKey = 'repo'
+//            username = "${artifactory_user}"
+//            password = "${artifactory_password}"
+//            maven = true
+//        }
+//    }
+//}
 
 subprojects {
     apply plugin: 'maven'
+    apply plugin: 'java'
     apply plugin: 'maven-publish'
 
     version = '1.0-SNAPSHOT'
     group = 'com.nortal.lorque'
-    
+
     repositories {
         mavenCentral()
         mavenLocal()
         maven { url "http://maven2.webmedia.ee" }
     }
+
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.12'
+}
+
+
+task simpleDist(type: Zip) {
+    group = "Distribution"
+    baseName = "wms-package-simple"
+    extension = "zip"
+    classifier = ""
+    description = "Builds package distribution archive (zip) suitable for deploying in OSGi container"
+
+    //    ext.baseDir = "${baseName}-${project.version}";
+
+    from("etc/osgi/META-INF") {
+        include "MANIFEST.MF"
+        into "META-INF"
+    }
+
+    subprojects.each { subproject ->
+        into("") { from subproject.jar }
+    }
+}
+
+task fullDist(type: Zip, dependsOn: simpleDist) { zipTask ->
+    group = "Distribution"
+    baseName = "wms-package-full"
+    classifier = ""
+    extension = "zip"
+    description = "Builds package distribution archive (zip) with all dependencies suitable for deploying in OSGi container"
+
+    from zipTree(simpleDist.archivePath)
+
+    gradle.taskGraph.whenReady { taskGraph ->
+        if (taskGraph.hasTask(":${zipTask.name}")) {
+            def projectNames = rootProject.subprojects*.name
+            def artifacts = new HashSet()
+            subprojects.each { subproject ->
+                (subproject.configurations.runtime.resolvedConfiguration.resolvedArtifacts).each { artifact ->
+                    def dependency = artifact.moduleVersion.id
+                    if (!projectNames.contains(dependency.name)) {
+                        artifacts << artifact.file
+                    }
+                }
+            }
+
+            zipTask.from(artifacts) { into "" }
+        }
+    }
 }

@@ -1,0 +1,76 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.athaydes.gradle.osgi:ipojo-plugin:1.0"
+    }
+}
+
+apply plugin: 'ipojo'
+
+apply plugin: 'java'
+apply plugin: 'osgi'
+
+ipojo {
+    ignoreAnnotations = false
+
+}
+
+//configurations {
+//    provided
+////    provided.extendsFrom(compile)
+//}
+//
+//sourceSets {
+//    sourceSets.main.compileClasspath += configurations.provided
+//    sourceSets.test.compileClasspath += configurations.provided
+//    sourceSets.test.runtimeClasspath += configurations.provided
+//}
+
+dependencies {
+    compile project(':lorque-api')
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile 'javax.websocket:javax.websocket-api:1.1'
+    compile 'org.osgi:org.osgi.core:4.3.1'
+    compile 'org.osgi:org.osgi.compendium:4.3.1'
+
+    compile 'org.apache.cxf:cxf-rt-frontend-jaxrs:3.0.2'
+    compile 'org.apache.cxf:cxf-rt-rs-client:3.0.2'
+    compile 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.postgresql:9.3-1100-jdbc41_1'
+
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+//    compile 'org.apache.commons:commons-dbcp2:2.0.1'
+//    compile 'org.hsqldb:hsqldb:2.3.2'
+    compile 'log4j:log4j:1.2.17'
+
+    compile 'org.apache.felix:org.apache.felix.ipojo.annotations:1.12.1'
+
+    // Transitive dependencies
+//    compile 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.cglib:3.0_1' // required by commons-pool2
+    // required by javax.ws.rs-api-2.0.1
+    compile 'org.apache.servicemix.specs:org.apache.servicemix.specs.stax-api-1.2:2.4.0'
+    compile 'org.apache.servicemix.specs:org.apache.servicemix.specs.jaxb-api-2.2:2.4.0'
+}
+
+
+
+def extraImports = [
+        '*'
+]
+
+jar {
+    manifest {
+        instruction 'Bundle-Activator', 'com.nortal.lorque.osgi.Activator'
+        instruction 'Import-Package', extraImports as String[]
+        instruction 'Export-Package', ''
+    }
+}
+
+
+
+
+task copyToLib(type: Copy) {
+    into "$projectDir/src/main/webapp/WEB-INF/bundles"
+    from configurations.runtime
+}

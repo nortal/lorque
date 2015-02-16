@@ -23,4 +23,6 @@ public interface QueryService {
   void fail(Query query);
 
   void cancel(Query query);
+
+  void setWebsocketCallback(WebsocketCallback callback);
 }

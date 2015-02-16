@@ -1,27 +1,18 @@
-/*
- *  Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  See the NOTICE file distributed with
- *  this work for additional information regarding copyright ownership.
- *  The ASF licenses this file to You under the Apache License, Version 2.0
- *  (the "License"); you may not use this file except in compliance with
- *  the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
 package com.nortal.lorque.websocket;
 
-import java.io.IOException;
-import java.util.Random;
-
-import javax.websocket.*;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.websocket.EncodeException;
+import javax.websocket.OnClose;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 
+/**
+ * @author Vassili Jakovlev
+ */
 @ServerEndpoint(value = "/ws/queries", encoders = {JsonEncoder.class})
 public class QueryWebsocket {
 
@@ -32,6 +23,18 @@ public class QueryWebsocket {
     if (QueryWebsocket.session == null || !QueryWebsocket.session.isOpen()) {
       QueryWebsocket.session = session;
     }
+    jndiBind();
+  }
+
+  private void jndiBind() {
+    Context initContext = null;
+    try {
+      initContext = new InitialContext();
+      initContext.rebind("queryWebsocket", this);
+    } catch (NamingException e) {
+      e.printStackTrace();
+    }
+
   }
 
   @OnClose
@@ -62,7 +65,6 @@ public class QueryWebsocket {
     if (session == null) {
       return;
     }
-    int i = new Random().nextInt(100);
     session.getOpenSessions().stream().filter(Session::isOpen).forEach(s -> sendMessage(s, msg));
   }
 

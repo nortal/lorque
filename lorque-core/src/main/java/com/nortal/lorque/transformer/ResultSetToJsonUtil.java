@@ -5,7 +5,6 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.nortal.lorque.core.DateFormat;
-import com.nortal.persistence.core.util.SqlUtil;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
@@ -89,13 +88,26 @@ public final class ResultSetToJsonUtil {
       case Types.INTEGER:
       case Types.SMALLINT:
       case Types.TINYINT:
-        jsonObject.addProperty(propertyName, SqlUtil.getLong(rs, propertyName));
+        jsonObject.addProperty(propertyName, getLong(rs.getObject(propertyName)));
         break;
       case Types.DATE:
       case Types.TIMESTAMP:
         jsonObject.addProperty(propertyName, formatDate(rs.getTimestamp(propertyName)));
         break;
     }
+  }
+
+  private static Long getLong(Object object) {
+    if (object == null) {
+      return null;
+    } else if (object instanceof BigDecimal) {
+      return Long.valueOf(((BigDecimal) object).longValue());
+    } else if (object instanceof Long) {
+      return (Long) object;
+    } else if (object instanceof String) {
+      return Long.valueOf((String) object);
+    }
+    throw new IllegalArgumentException("You can give only String, BigDecimal and Long types!");
   }
 
   private static void addProperty(JsonArray jsonObject, String propertyName, ResultSet rs, int propertyType)

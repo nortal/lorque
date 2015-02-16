@@ -1,5 +1,16 @@
-apply plugin: 'java'
+apply plugin: 'osgi'
 
 dependencies {
     compile 'com.google.code.gson:gson:2.3'
+}
+
+task copyToLib(type: Copy) {
+    into "$buildDir/output/lib"
+    from configurations.runtime
+}
+
+jar {
+    manifest {
+        instruction 'Export-Package', 'javax.tools, javax.xml.ws, javax.xml.transform.stax, *'
+    }
 }

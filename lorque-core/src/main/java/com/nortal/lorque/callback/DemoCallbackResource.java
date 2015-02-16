@@ -1,5 +1,6 @@
 package com.nortal.lorque.callback;
 
+
 import com.nortal.lorque.core.BaseResource;
 
 import javax.ws.rs.GET;
@@ -9,7 +10,7 @@ import javax.ws.rs.QueryParam;
 /**
  * @author Vassili Jakovlev
  */
-@Path("callbacks")
+@Path("/callbacks")
 public class DemoCallbackResource extends BaseResource {
 
   @GET

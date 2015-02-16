@@ -1,9 +1,10 @@
 package com.nortal.lorque.settings;
 
+import com.nortal.lorque.plugin.LorquePlugin;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -12,13 +13,9 @@ import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 @Path("/settings")
 @Produces(MediaType.APPLICATION_JSON)
 public class SettingsResource {
-
-  @Autowired
-  private Environment env;
 
   @GET
   public List<Pair<String, String>> getSettings() {
@@ -29,7 +26,7 @@ public class SettingsResource {
   }
 
   private Pair<String, String> getProp(String key) {
-    return Pair.of(key, env.getProperty(key));
+    return Pair.of(key, "foo");
   }
 
 }

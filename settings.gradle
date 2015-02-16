@@ -1,3 +1,5 @@
-include 'lorque-api', 'lorque-app'
+include 'lorque-api', 'lorque-core', 'lorque-app'
 
 rootProject.name = 'lorque'
+include 'lorque-rengy-plugin'
+
