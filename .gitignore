@@ -20,4 +20,6 @@ build
 .idea
 *.iml
 
+.DS_Store
+rebel*.xml
 src/main/resources/runtime.properties

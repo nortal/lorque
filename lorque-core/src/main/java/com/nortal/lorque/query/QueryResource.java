@@ -8,6 +8,9 @@ import javax.naming.NamingException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -57,11 +60,46 @@ public class QueryResource extends BaseResource {
     queryService.cancel(query);
   }
 
+  @GET
+  @Path("/{id}/report")
+  public Response downloadReport(@PathParam("id") Long queryId) {
+    // Job job = jobService.getJob(jobId);
+    // jobService.getReport(jobId);
+    final byte[] content = (byte[]) queryService.getQuery(queryId).getPlugins().get(0).getResult();
+
+    if (content == null) {
+      throw new WebApplicationException("Job output not found.", Response.Status.NOT_FOUND);
+    }
+
+    StreamingOutput streamingOutput = os -> {
+      try {
+        os.write(content);
+        os.flush();
+      } catch (IOException e) {
+        throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+      }
+    };
+
+    Response.ResponseBuilder builder = Response.status(Response.Status.OK);
+    return builder.type(getMediaType("foo.pdf")).entity(streamingOutput).build();
+
+  }
+
+  private String getMediaType(String filename) {
+    if (filename.toLowerCase().endsWith(".pdf")) {
+      return "application/pdf";
+    }
+    return MediaType.APPLICATION_OCTET_STREAM;
+  }
+
   private class WebsocketCallbackImpl implements WebsocketCallback {
 
     @Override
     public void broadcast(Object message) {
       Object queryWebsocket = getWebsocket();
+      if (queryWebsocket == null) {
+        return;
+      }
       try {
         // FIXME: that's dirty hack because of different classloaders
         Method method = queryWebsocket.getClass().getMethod("broadcast", Object.class);

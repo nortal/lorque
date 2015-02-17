@@ -1,4 +1,4 @@
-package com.nortal.lorque.plugin.rengy.lorque;
+package com.nortal.lorque.plugin.rengy;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

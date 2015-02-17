@@ -1,17 +1,15 @@
 package com.nortal.lorque.settings;
 
-import com.nortal.lorque.plugin.LorquePlugin;
+import com.nortal.lorque.osgi.ConfigurationService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
+import org.osgi.service.cm.Configuration;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Path("/settings")
 @Produces(MediaType.APPLICATION_JSON)
@@ -20,13 +18,17 @@ public class SettingsResource {
   @GET
   public List<Pair<String, String>> getSettings() {
     List<Pair<String, String>> settings = new ArrayList<>();
-    settings.add(getProp("db.url"));
-    settings.add(getProp("db.user"));
+    Dictionary<String, ?> properties = ConfigurationService.getProperties();
+    Enumeration<String> keys = properties.keys();
+    while (keys.hasMoreElements()) {
+      String key = keys.nextElement();
+      String value = properties.get(key).toString();
+      if (key.contains("pass")) {
+        value = StringUtils.repeat("*", new Random().nextInt(10) + 3);
+      }
+      settings.add(Pair.of(key, value));
+    }
     return settings;
-  }
-
-  private Pair<String, String> getProp(String key) {
-    return Pair.of(key, "foo");
   }
 
 }

@@ -2,11 +2,9 @@ package com.nortal.lorque.plugin.rengy;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.osgi.service.cm.ManagedService;
 import org.osgi.util.tracker.ServiceTracker;
 
 import java.io.IOException;
@@ -19,16 +17,18 @@ import java.util.Hashtable;
 public class Activator implements BundleActivator {
 
   public static final String PID = "com.nortal.lorque.plugin.rengy";
+  private ConfigurationServiceTracker configurationServiceTracker;
 
   public void start(BundleContext context) throws Exception {
-    new ConfigurationServiceTracker(context).open();
-    Hashtable<String, Object> properties = new Hashtable<>();
-    properties.put(Constants.SERVICE_PID, PID);
-    context.registerService(ManagedService.class, new ConfigurationService(), properties);
+    configurationServiceTracker = new ConfigurationServiceTracker(context);
+    configurationServiceTracker.open();
+//    Hashtable<String, Object> properties = new Hashtable<>();
+//    properties.put(Constants.SERVICE_PID, PID);
+//    context.registerService(ManagedService.class, new ConfigurationService(), properties);
   }
 
   public void stop(BundleContext context) throws Exception {
-//    httpTracker.close();
+    configurationServiceTracker.close();
   }
 
   private class ConfigurationServiceTracker extends ServiceTracker<ConfigurationAdmin, ConfigurationAdmin> {

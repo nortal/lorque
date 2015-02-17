@@ -1,4 +1,4 @@
-package com.nortal.lorque.plugin.rengy.rengy;
+package com.nortal.lorque.plugin.rengy;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -35,25 +35,16 @@ public class RengyPlugin implements LorquePlugin {
 
   @Override
   public void execute(Query query, PluginCall pluginCall) {
-    byte[] bytes = generateReport(pluginCall);
+    byte[] bytes = generateReport(query, pluginCall);
     pluginCall.setResult(bytes);
   }
 
-  public byte[] generateReport(PluginCall pluginCall) {
-//    String rengyUrl = ConfigurationService.getString("rengy.url");
-
+  public byte[] generateReport(Query query, PluginCall pluginCall) {
     Gson gson = new GsonBuilder().create();
     Report report = gson.fromJson(pluginCall.getParameters().toString(), Report.class);
 
-    JsonArray properties = new JsonArray();
-    for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-      JsonObject property = new JsonObject();
-      property.addProperty("key", entry.getKey());
-      property.addProperty("value", entry.getValue());
-      properties.add(property);
-    }
     JsonObject baseItem = new JsonObject();
-    baseItem.add("items", properties);
+    baseItem.add("items", gson.toJsonTree(query.getResult().get(0).getData()));
 
     Map<String, String> data = new HashMap<>();
     data.put("BASE_ITEM", baseItem.toString());
