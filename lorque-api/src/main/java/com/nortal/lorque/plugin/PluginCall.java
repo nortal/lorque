@@ -1,10 +1,13 @@
 package com.nortal.lorque.plugin;
 
+/**
+ * @author Vassili Jakovlev
+ */
 public class PluginCall {
 
   private String name;
   private Object parameters;
-  private Object result;
+  private PluginResult result;
 
   public String getName() {
     return name;
@@ -22,11 +25,11 @@ public class PluginCall {
     this.parameters = parameters;
   }
 
-  public Object getResult() {
+  public PluginResult getResult() {
     return result;
   }
 
-  public void setResult(Object result) {
+  public void setResult(PluginResult result) {
     this.result = result;
   }
 }

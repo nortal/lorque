@@ -63,7 +63,6 @@ jar {
     manifest {
         instruction 'Bundle-Activator', 'com.nortal.lorque.osgi.Activator'
         instruction 'Import-Package', extraImports as String[]
-        instruction 'Export-Package', ''
     }
 }
 

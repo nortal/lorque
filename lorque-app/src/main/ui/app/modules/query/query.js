@@ -16,6 +16,7 @@ angular
   })
   .controller('QueryListCtrl', function ($scope, $resource, $location, config) {
     $scope.queries = $resource(config.api + '/api/v1/queries').query();
+    $scope.customColumns = $resource(config.api + '/api/v1/ui/columns').query();
     var ws = new WebSocket('ws://localhost:8080/lorque/ws/queries');
 
     ws.onopen = function () {
@@ -55,6 +56,10 @@ angular
       } else if (query.status === 'FAILED') {
         return 'danger';
       }
+    };
+
+    $scope.getResultDownloadLink = function (queryId, pluginName) {
+      return config.api + '/api/v1/queries/' + queryId + '/results/' + pluginName;
     };
 
     $scope.navigateToQueryDetails = function (queryId) {

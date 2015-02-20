@@ -4,6 +4,7 @@ import com.nortal.lorque.callback.DemoCallbackResource;
 import com.nortal.lorque.core.GsonProvider;
 import com.nortal.lorque.query.QueryResource;
 import com.nortal.lorque.settings.SettingsResource;
+import com.nortal.lorque.ui.UiResource;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 import org.osgi.framework.BundleActivator;
@@ -59,7 +60,7 @@ public class Activator implements BundleActivator {
         httpService.registerServlet("/api/v1", cxf, null, null);
         JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
         factory.setBus(cxf.getBus());
-        factory.setServiceBeanObjects(new QueryResource(), new SettingsResource(), new DemoCallbackResource());
+        factory.setServiceBeanObjects(new QueryResource(), new SettingsResource(), new DemoCallbackResource(), UiResource.getInstance());
         factory.setProvider(new GsonProvider<>());
         factory.setAddress("/");
         factory.create();

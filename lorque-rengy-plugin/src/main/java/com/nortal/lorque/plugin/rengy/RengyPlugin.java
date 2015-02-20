@@ -5,8 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.nortal.lorque.Query;
+import com.nortal.lorque.plugin.CustomColumn;
 import com.nortal.lorque.plugin.LorquePlugin;
 import com.nortal.lorque.plugin.PluginCall;
+import com.nortal.lorque.plugin.PluginResult;
 import eu.rengy.client.Report;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.felix.ipojo.annotations.Component;
@@ -36,7 +38,16 @@ public class RengyPlugin implements LorquePlugin {
   @Override
   public void execute(Query query, PluginCall pluginCall) {
     byte[] bytes = generateReport(query, pluginCall);
-    pluginCall.setResult(bytes);
+    pluginCall.setResult(new PluginResult(bytes, "application/pdf"));
+  }
+
+  @Override
+  public CustomColumn getCustomColumn() {
+    CustomColumn column = new CustomColumn();
+    column.setTitle("Rengy PDF");
+    column.setContent("<a href='../api/v1/queries/:queryId/report'>PDF</a>");
+    column.setPluginName(getName());
+    return column;
   }
 
   public byte[] generateReport(Query query, PluginCall pluginCall) {

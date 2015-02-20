@@ -4,6 +4,7 @@ angular
   .module('lorque', [
     'ngResource',
     'ngRoute',
+    'ngSanitize',
     'lorque.query',
     'lorque.settings',
     'lorque.config',

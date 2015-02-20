@@ -11,4 +11,6 @@ public interface LorquePlugin {
 
   void execute(Query query, PluginCall pluginCall);
 
+  CustomColumn getCustomColumn();
+
 }

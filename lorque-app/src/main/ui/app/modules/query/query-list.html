@@ -8,6 +8,7 @@
       <th>Submitted</th>
       <th>Started</th>
       <th>Finished</th>
+      <th ng-repeat="c in customColumns">{{c.title}}</th>
       <th>Status</th>
     </tr>
     </thead>
@@ -19,6 +20,10 @@
       <td>{{formatDate(query.submitTime)}}</td>
       <td>{{formatDate(query.startTime)}}</td>
       <td>{{formatDate(query.endTime)}}</td>
+      <td ng-repeat="c in customColumns">
+        <a ng-href="{{getResultDownloadLink(query.id, c.pluginName)}}" target="_blank"
+           ng-if="query.status === 'COMPLETED'">Download</a>
+      </td>
       <td>
         <button type="button" ng-class="'btn-block btn btn-' + getStatusButtonClass(query)">
           {{query.status}}

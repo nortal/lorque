@@ -3,12 +3,12 @@ package com.nortal.lorque.query;
 import com.nortal.lorque.*;
 import com.nortal.lorque.plugin.LorquePlugin;
 import com.nortal.lorque.plugin.PluginCall;
+import com.nortal.lorque.plugin.impl.PluginService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.log4j.Logger;
 
 import javax.ws.rs.client.*;
@@ -28,8 +28,8 @@ public class QueryServiceImpl implements QueryService {
   private List<Query> queries = new ArrayList<>();
   private long nextId = 1;
 
-  @Requires(optional = false, specification = LorquePlugin.class)
-  private Collection<LorquePlugin> plugins = new ArrayList<>();
+  @Requires(optional = false, specification = PluginService.class)
+  private PluginService pluginService;
 
   private WebsocketCallback websocketCallback;
 
@@ -180,7 +180,7 @@ public class QueryServiceImpl implements QueryService {
   }
 
   private LorquePlugin getPlugin(String pluginName) {
-    return plugins.stream().filter(p -> StringUtils.equals(pluginName, p.getName())).findFirst().orElse(null);
+    return pluginService.getPlugins().stream().filter(p -> StringUtils.equals(pluginName, p.getName())).findFirst().orElse(null);
   }
 
   private void notifyCallback(Query query) {
