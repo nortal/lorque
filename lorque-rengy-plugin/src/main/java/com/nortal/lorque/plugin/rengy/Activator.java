@@ -8,6 +8,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -22,6 +23,8 @@ public class Activator implements BundleActivator {
   public void start(BundleContext context) throws Exception {
     configurationServiceTracker = new ConfigurationServiceTracker(context);
     configurationServiceTracker.open();
+    Arrays.asList(context.getBundles()).forEach(b -> System.out.println("CM: " + b.getDataFile("config")));
+//    System.out.println("********* CM **********" + context.getDataFile("config"));
 //    Hashtable<String, Object> properties = new Hashtable<>();
 //    properties.put(Constants.SERVICE_PID, PID);
 //    context.registerService(ManagedService.class, new ConfigurationService(), properties);

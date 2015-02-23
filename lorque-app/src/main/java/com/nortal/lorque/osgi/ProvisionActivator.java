@@ -24,6 +24,7 @@ import org.osgi.service.http.HttpService;
 import org.osgi.util.tracker.ServiceTracker;
 
 import javax.servlet.ServletContext;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,14 @@ public final class ProvisionActivator implements BundleActivator {
           list.add(url);
         }
       }
+    }
+    String userDir = System.getProperty("user.home");
+    File file = new File(userDir + "/.lorque/plugins");
+    if (!file.exists() || !file.isDirectory() || !file.getName().endsWith(".jar")) {
+      return list;
+    }
+    for (File plugin : file.listFiles()) {
+      list.add(plugin.toURI().toURL());
     }
     return list;
   }
