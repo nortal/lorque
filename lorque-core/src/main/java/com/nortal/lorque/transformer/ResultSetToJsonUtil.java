@@ -104,6 +104,8 @@ public final class ResultSetToJsonUtil {
       return Long.valueOf(((BigDecimal) object).longValue());
     } else if (object instanceof Long) {
       return (Long) object;
+    } else if (object instanceof Integer) {
+      return ((Integer) object).longValue();
     } else if (object instanceof String) {
       return Long.valueOf((String) object);
     }
