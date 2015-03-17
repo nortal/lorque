@@ -52,7 +52,7 @@ public final class ResultSetToJsonUtil {
       for (int columnIndex = 1; columnIndex <= rsMetaData.getColumnCount(); columnIndex++) {
         String columnName = rsMetaData.getColumnName(columnIndex);
         int columnType = rsMetaData.getColumnType(columnIndex);
-        addProperty(jsonRow, columnName, rs, columnType);
+        addProperty(jsonRow, columnName.toLowerCase(), rs, columnType);
       }
       jsonArray.add(jsonRow);
     }

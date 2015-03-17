@@ -2,9 +2,8 @@ package com.nortal.lorque.plugin.rengy;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.nortal.lorque.Query;
+import com.nortal.lorque.QueryResultSet;
 import com.nortal.lorque.plugin.CustomColumn;
 import com.nortal.lorque.plugin.LorquePlugin;
 import com.nortal.lorque.plugin.PluginCall;
@@ -18,7 +17,11 @@ import org.apache.felix.ipojo.annotations.ServiceProperty;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Component(name = "Rengy plugin", managedservice = "com.nortal.lorque.plugin.rengy")
 @Provides
@@ -54,11 +57,15 @@ public class RengyPlugin implements LorquePlugin {
     Gson gson = new GsonBuilder().create();
     Report report = gson.fromJson(pluginCall.getParameters().toString(), Report.class);
 
-    JsonObject baseItem = new JsonObject();
-    baseItem.add("items", gson.toJsonTree(query.getResult().get(0).getData()));
+    List<QueryResultSet> resultSets = query.getResult();
 
-    Map<String, String> data = new HashMap<>();
-    data.put("BASE_ITEM", baseItem.toString());
+    Map<String, String> data = report.getData() != null ? report.getData() : new HashMap<>();
+
+    data.putAll(data.entrySet()
+        .stream()
+        .collect(Collectors.toMap(Map.Entry::getKey,
+            e -> replaceReferences(e.getValue(), resultSets, gson))));
+
     report.setData(data);
 
     PostMethod method = report.post(rengyUrl + "/main", rengyTimeout);
@@ -68,4 +75,17 @@ public class RengyPlugin implements LorquePlugin {
       return null;
     }
   }
+
+  private String replaceReferences(String data, List<QueryResultSet> resultSets, Gson gson) {
+    Pattern pattern = Pattern.compile("\"@resultsets\\[(\\d+)\\]\"", Pattern.CASE_INSENSITIVE);
+    String input = data;
+    Matcher matcher = pattern.matcher(input);
+    while (matcher.find()) {
+      int idx = Integer.valueOf(matcher.group(1));
+      input = matcher.replaceFirst(gson.toJsonTree(resultSets.get(idx).getData()).toString());
+      matcher = pattern.matcher(input);
+    }
+    return input;
+  }
+
 }
