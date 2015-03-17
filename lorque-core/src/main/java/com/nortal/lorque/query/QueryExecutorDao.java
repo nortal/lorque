@@ -6,7 +6,6 @@ import com.nortal.lorque.QueryParameter;
 import com.nortal.lorque.QueryResultSet;
 import com.nortal.lorque.core.DataSourceProvider;
 import com.nortal.lorque.transformer.ResultSetToJsonUtil;
-import org.apache.felix.ipojo.annotations.Instantiate;
 
 import java.lang.reflect.Field;
 import java.sql.*;

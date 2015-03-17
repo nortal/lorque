@@ -19,12 +19,10 @@ package com.nortal.lorque.osgi;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.http.HttpService;
-import org.osgi.util.tracker.ServiceTracker;
 
 import javax.servlet.ServletContext;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +36,7 @@ public final class ProvisionActivator implements BundleActivator {
 
   public void start(BundleContext context) throws Exception {
     servletContext.setAttribute(BundleContext.class.getName(), context);
-    ArrayList<Bundle> installed = new ArrayList<Bundle>();
+    ArrayList<Bundle> installed = new ArrayList<>();
     for (URL url : findBundles()) {
       this.servletContext.log("Installing bundle [" + url + "]");
       Bundle bundle = context.installBundle(url.toExternalForm());
@@ -47,31 +45,46 @@ public final class ProvisionActivator implements BundleActivator {
     for (Bundle bundle : installed) {
       bundle.start();
     }
-
   }
 
   public void stop(BundleContext context) throws Exception {
   }
 
   private List<URL> findBundles() throws Exception {
-    ArrayList<URL> list = new ArrayList<URL>();
+    ArrayList<URL> list = new ArrayList<>();
+    list.addAll(loadPackagedBundles());
+    list.addAll(loadUserBundles());
+    return list;
+  }
+
+  private ArrayList<URL> loadPackagedBundles() throws MalformedURLException {
+    ArrayList<URL> bundles = new ArrayList<>();
     for (Object o : this.servletContext.getResourcePaths("/WEB-INF/bundles/")) {
       String name = (String) o;
       if (name.endsWith(".jar")) {
         URL url = this.servletContext.getResource(name);
         if (url != null) {
-          list.add(url);
+          bundles.add(url);
         }
       }
     }
-    String userDir = System.getProperty("user.home");
-    File file = new File(userDir + "/.lorque/plugins");
+    return bundles;
+  }
+
+  private ArrayList<URL> loadUserBundles() throws MalformedURLException {
+    ArrayList<URL> bundles = new ArrayList<>();
+    String userDir = System.getProperty("user.home") + File.separator + ".lorque";
+    File file = new File(userDir + File.separator + "plugins");
     if (!file.exists() || !file.isDirectory() || !file.getName().endsWith(".jar")) {
-      return list;
+      return bundles;
     }
-    for (File plugin : file.listFiles()) {
-      list.add(plugin.toURI().toURL());
+    File[] files = file.listFiles();
+    if (files == null) {
+      return bundles;
     }
-    return list;
+    for (File plugin : files) {
+      bundles.add(plugin.toURI().toURL());
+    }
+    return bundles;
   }
 }

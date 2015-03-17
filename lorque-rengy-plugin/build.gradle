@@ -21,6 +21,7 @@ repositories {
 // In this section you declare the dependencies for your production and test code
 dependencies {
     compile project(':lorque-api')
+    compile project(':lorque-core')
     compile 'org.osgi:org.osgi.core:4.3.1'
     compile 'org.osgi:org.osgi.compendium:4.3.1'
     compile 'eu.rengy:client:4.1.1'

@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import static com.nortal.lorque.osgi.ConfigurationUtil.addDefaultProperty;
+
 /**
  * @author Vassili Jakovlev (vassili.jakovlev@nortal.com)
  */
@@ -37,7 +39,7 @@ public class Activator implements BundleActivator {
     new ConfigurationServiceTracker(context).open();
     Hashtable<String, Object> properties = new Hashtable<>();
     properties.put(Constants.SERVICE_PID, PID);
-    context.registerService(ManagedService.class, new ConfigurationService(), properties);
+    context.registerService(ManagedService.class, new ConfigurationService(PID), properties);
   }
 
   public void stop(BundleContext context) throws Exception {
@@ -93,16 +95,17 @@ public class Activator implements BundleActivator {
       ConfigurationAdmin configurationAdmin = context.getService(reference);
       try {
         Configuration configuration = configurationAdmin.getConfiguration(PID);
-        Dictionary properties = new Hashtable<>();
-        properties.put("db.url", "jdbc:postgresql://delex.webmedia.int:5432/nortalsystem");
-        properties.put("db.user", "");
-        properties.put("db.password", "");
+        Dictionary<String, String> properties = ConfigurationUtil.loadFromFile(PID);
+        addDefaultProperty(properties, "db.url", "");
+        addDefaultProperty(properties, "db.user", "");
+        addDefaultProperty(properties, "db.password", "");
         configuration.update(properties);
       } catch (IOException e) {
         e.printStackTrace();
       }
       return super.addingService(reference);
     }
+
   }
 
 

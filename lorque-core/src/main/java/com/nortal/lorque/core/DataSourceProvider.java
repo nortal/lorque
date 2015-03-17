@@ -1,18 +1,20 @@
 package com.nortal.lorque.core;
 
+import com.nortal.lorque.osgi.Activator;
 import com.nortal.lorque.osgi.ConfigurationService;
 import oracle.jdbc.pool.OracleDataSource;
 import org.postgresql.ds.PGPoolingDataSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.AbstractCollection;
 
 public class DataSourceProvider {
 
   public static DataSource getDataSource() {
-    String url = ConfigurationService.getString("db.url");
-    String username = ConfigurationService.getString("db.user");
-    String password = ConfigurationService.getString("db.password");
+    String url = ConfigurationService.getString(Activator.PID, "db.url");
+    String username = ConfigurationService.getString(Activator.PID, "db.user");
+    String password = ConfigurationService.getString(Activator.PID, "db.password");
     if (url.contains("postgresql")) {
       return getPostgreDataSoure(url, username, password);
     } else if (url.contains("oracle")) {

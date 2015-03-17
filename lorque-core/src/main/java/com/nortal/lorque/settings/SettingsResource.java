@@ -18,7 +18,12 @@ public class SettingsResource {
   @GET
   public List<Pair<String, String>> getSettings() {
     List<Pair<String, String>> settings = new ArrayList<>();
-    Dictionary<String, ?> properties = ConfigurationService.getProperties();
+    Dictionary<String, ?> properties = ConfigurationService.getAllProperties();
+    getSettings(settings, properties);
+    return settings;
+  }
+
+  private void getSettings(List<Pair<String, String>> settings, Dictionary<String, ?> properties) {
     Enumeration<String> keys = properties.keys();
     while (keys.hasMoreElements()) {
       String key = keys.nextElement();
@@ -28,7 +33,6 @@ public class SettingsResource {
       }
       settings.add(Pair.of(key, value));
     }
-    return settings;
   }
 
 }
