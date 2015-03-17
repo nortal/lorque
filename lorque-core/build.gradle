@@ -14,7 +14,6 @@ apply plugin: 'osgi'
 
 ipojo {
     ignoreAnnotations = false
-
 }
 
 //configurations {
@@ -38,6 +37,8 @@ dependencies {
     compile 'org.apache.cxf:cxf-rt-frontend-jaxrs:3.0.2'
     compile 'org.apache.cxf:cxf-rt-rs-client:3.0.2'
     compile 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.postgresql:9.3-1100-jdbc41_1'
+    compile group: 'oracle', name: 'ojdbc6', version: '11.2.0.3.0'
+
 
     compile 'org.apache.commons:commons-lang3:3.3.2'
 //    compile 'org.apache.commons:commons-dbcp2:2.0.1'
